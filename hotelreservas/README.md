@@ -13,39 +13,6 @@ hotelreservas/
 └── README.md
 ```
 
-## Tecnologias Utilizadas
-
-* IDE: Visual Studio Code
-* Banco de Dados: SQLite 3
-* Servidor de Aplicação: Node.js
-* Framework Back-end: Express
-* Linguagens: HTML, CSS e JavaScript
-
-## Banco de Dados
-
-### Tabela: quartos
-
-| Campo  | Tipo        |
-| ------ | ----------- |
-| id     | INTEGER     |
-| numero | VARCHAR(10) |
-| tipo   | VARCHAR(50) |
-
-### Tabela: reservas
-
-| Campo        | Tipo         |
-| ------------ | ------------ |
-| id           | INTEGER      |
-| hospede      | VARCHAR(100) |
-| data_entrada | DATE         |
-| data_saida   | DATE         |
-| quarto_id    | INTEGER      |
-
-### Relacionamento
-
-* Um quarto pode possuir várias reservas.
-* Uma reserva pertence a apenas um quarto.
-
 ## Funcionalidades
 
 ### Quartos
