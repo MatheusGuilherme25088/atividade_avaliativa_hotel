@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Reservas - Cadastro de Reserva</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="icon">🏨</span>
+      <span>Hotel Reservas</span>
+    </div>
+    <nav>
+      <a href="index.html" class="active">🏠 Quartos</a>
+      <a href="index.html">📅 Reservas</a>
+      <a href="sobre.html">ℹ️ Sobre</a>
+    </nav>
+    <div class="footer">© 2024 Hotel Reservas - Projeto Full Stack</div>
+  </aside>
+
+  <main>
+    <div class="form-card">
+      <h2>Cadastro de Reserva</h2>
+      <p class="subtitle" id="quartoInfo">Quarto: -</p>
+
+      <form id="formReserva">
+        <div class="field">
+          <label for="hospede">Nome do Hóspede</label>
+          <input type="text" id="hospede" placeholder="Ex: João da Silva" required>
+        </div>
+
+        <div class="field">
+          <label for="dataEntrada">Data de Entrada</label>
+          <input type="date" id="dataEntrada" required>
+        </div>
+
+        <div class="field">
+          <label for="dataSaida">Data de Saída</label>
+          <input type="date" id="dataSaida" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="margin-bottom: 10px;">📅 Cadastrar Reserva</button>
+        <a href="#" id="btnVoltar" class="btn btn-secondary btn-block">Voltar</a>
+      </form>
+    </div>
+  </main>
+
+  <script src="api.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const quartoId = params.get('id');
+
+    if (!quartoId) {
+      window.location.href = 'index.html';
+    }
+
+    document.getElementById('btnVoltar').href = `reservas-quarto.html?id=${quartoId}`;
+
+    async function carregarQuarto() {
+      try {
+        const quarto = await apiGet(`/quartos/${quartoId}`);
+        document.getElementById('quartoInfo').textContent = `Quarto: ${quarto.numero} - ${quarto.tipo}`;
+      } catch (e) {
+        document.getElementById('quartoInfo').textContent = 'Quarto não encontrado';
+      }
+    }
+
+    document.getElementById('formReserva').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const hospede = document.getElementById('hospede').value.trim();
+      const dataEntrada = document.getElementById('dataEntrada').value;
+      const dataSaida = document.getElementById('dataSaida').value;
+
+      if (!hospede || !dataEntrada || !dataSaida) {
+        alert('Preencha todos os campos.');
+        return;
+      }
+
+      if (dataSaida < dataEntrada) {
+        alert('A data de saída deve ser posterior à data de entrada.');
+        return;
+      }
+
+      try {
+        await apiPost('/reservas', {
+          hospede,
+          data_entrada: dataEntrada,
+          data_saida: dataSaida,
+          quarto_id: Number(quartoId)
+        });
+        window.location.href = `reservas-quarto.html?id=${quartoId}`;
+      } catch (e) {
+        alert('Erro ao cadastrar reserva: ' + e.message);
+      }
+    });
+
+    carregarQuarto();
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "hotelreservas-api",
+  "version": "1.0.0",
+  "description": "API do sistema Hotel Reservas",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "seed": "node db/seed.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}

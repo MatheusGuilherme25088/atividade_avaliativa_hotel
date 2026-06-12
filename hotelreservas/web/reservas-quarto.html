@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Reservas - Reservas do Quarto</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="icon">🏨</span>
+      <span>Hotel Reservas</span>
+    </div>
+    <nav>
+      <a href="index.html" class="active">🏠 Quartos</a>
+      <a href="index.html">📅 Reservas</a>
+      <a href="sobre.html">ℹ️ Sobre</a>
+    </nav>
+    <div class="footer">© 2024 Hotel Reservas - Projeto Full Stack</div>
+  </aside>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1 id="tituloQuarto">Reservas do Quarto</h1>
+        <p id="tipoQuarto">Tipo: -</p>
+      </div>
+      <a href="#" id="btnNovaReserva" class="btn btn-primary">+ Nova Reserva</a>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Hóspede</th>
+            <th>Entrada</th>
+            <th>Saída</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="reservasTbody">
+          <tr><td colspan="5" class="empty">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 16px;">
+      <a href="index.html" class="btn btn-secondary">← Voltar</a>
+    </div>
+  </main>
+
+  <!-- Modal de confirmação de exclusão -->
+  <div class="modal-overlay hidden" id="modalExcluir">
+    <div class="modal">
+      <button class="close" id="closeModal">✕</button>
+      <div class="icon-warning">!</div>
+      <h3>Excluir Reserva</h3>
+      <p>Deseja realmente excluir esta reserva?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelarExclusao">Cancelar</button>
+        <button class="btn btn-danger" id="confirmarExclusao">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const quartoId = params.get('id');
+    let reservaParaExcluir = null;
+
+    if (!quartoId) {
+      window.location.href = 'index.html';
+    }
+
+    document.getElementById('btnNovaReserva').href = `cadastro-reserva.html?id=${quartoId}`;
+
+    async function carregarQuarto() {
+      try {
+        const quarto = await apiGet(`/quartos/${quartoId}`);
+        document.getElementById('tituloQuarto').textContent = `Reservas do Quarto ${quarto.numero}`;
+        document.getElementById('tipoQuarto').textContent = `Tipo: ${quarto.tipo}`;
+      } catch (e) {
+        document.getElementById('tituloQuarto').textContent = 'Quarto não encontrado';
+      }
+    }
+
+    async function carregarReservas() {
+      const tbody = document.getElementById('reservasTbody');
+      try {
+        const reservas = await apiGet(`/reservas?quarto_id=${quartoId}`);
+        if (reservas.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhuma reserva cadastrada para este quarto.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = reservas.map(r => `
+          <tr>
+            <td>${r.id}</td>
+            <td>${r.hospede}</td>
+            <td>${formatDate(r.data_entrada)}</td>
+            <td>${formatDate(r.data_saida)}</td>
+            <td class="actions">
+              <button class="btn btn-danger btn-sm" onclick="abrirModalExclusao(${r.id})">Excluir</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty">Erro ao carregar reservas: ${e.message}</td></tr>`;
+      }
+    }
+
+    function abrirModalExclusao(id) {
+      reservaParaExcluir = id;
+      document.getElementById('modalExcluir').classList.remove('hidden');
+    }
+
+    function fecharModal() {
+      document.getElementById('modalExcluir').classList.add('hidden');
+      reservaParaExcluir = null;
+    }
+
+    document.getElementById('closeModal').onclick = fecharModal;
+    document.getElementById('cancelarExclusao').onclick = fecharModal;
+
+    document.getElementById('confirmarExclusao').onclick = async () => {
+      if (!reservaParaExcluir) return;
+      try {
+        await apiDelete(`/reservas/${reservaParaExcluir}`);
+        fecharModal();
+        carregarReservas();
+      } catch (e) {
+        alert('Erro ao excluir: ' + e.message);
+      }
+    };
+
+    carregarQuarto();
+    carregarReservas();
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Reservas - Quartos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="icon">🏨</span>
+      <span>Hotel Reservas</span>
+    </div>
+    <nav>
+      <a href="index.html" class="active">🏠 Quartos</a>
+      <a href="#" id="navReservas">📅 Reservas</a>
+      <a href="sobre.html">ℹ️ Sobre</a>
+    </nav>
+    <div class="footer">© 2024 Hotel Reservas - Projeto Full Stack</div>
+  </aside>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>Quartos Cadastrados</h1>
+        <p>Gerencie os quartos do hotel</p>
+      </div>
+      <a href="cadastro-quarto.html" class="btn btn-primary">+ Novo Quarto</a>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Nº Quarto</th>
+            <th>Tipo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="quartosTbody">
+          <tr><td colspan="3" class="empty">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal de confirmação de exclusão -->
+  <div class="modal-overlay hidden" id="modalExcluir">
+    <div class="modal">
+      <button class="close" id="closeModal">✕</button>
+      <div class="icon-warning">!</div>
+      <h3>Excluir Quarto</h3>
+      <p id="modalText">Deseja realmente excluir este quarto?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelarExclusao">Cancelar</button>
+        <button class="btn btn-danger" id="confirmarExclusao">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    let quartoParaExcluir = null;
+
+    async function carregarQuartos() {
+      const tbody = document.getElementById('quartosTbody');
+      try {
+        const quartos = await apiGet('/quartos');
+        if (quartos.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" class="empty">Nenhum quarto cadastrado.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = quartos.map(q => `
+          <tr>
+            <td>${q.numero}</td>
+            <td>${q.tipo}</td>
+            <td class="actions">
+              <a href="reservas-quarto.html?id=${q.id}" class="btn btn-primary btn-sm">Ver Reservas</a>
+              <button class="btn btn-danger btn-sm" onclick="abrirModalExclusao(${q.id}, '${q.numero}')">Excluir</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="3" class="empty">Erro ao carregar quartos: ${e.message}</td></tr>`;
+      }
+    }
+
+    function abrirModalExclusao(id, numero) {
+      quartoParaExcluir = id;
+      document.getElementById('modalText').textContent = `Deseja realmente excluir o quarto ${numero}?`;
+      document.getElementById('modalExcluir').classList.remove('hidden');
+    }
+
+    function fecharModal() {
+      document.getElementById('modalExcluir').classList.add('hidden');
+      quartoParaExcluir = null;
+    }
+
+    document.getElementById('closeModal').onclick = fecharModal;
+    document.getElementById('cancelarExclusao').onclick = fecharModal;
+
+    document.getElementById('confirmarExclusao').onclick = async () => {
+      if (!quartoParaExcluir) return;
+      try {
+        await apiDelete(`/quartos/${quartoParaExcluir}`);
+        fecharModal();
+        carregarQuartos();
+      } catch (e) {
+        alert('Erro ao excluir: ' + e.message);
+      }
+    };
+
+    document.getElementById('navReservas').onclick = async (e) => {
+      e.preventDefault();
+      try {
+        const quartos = await apiGet('/quartos');
+        if (quartos.length > 0) {
+          window.location.href = `reservas-quarto.html?id=${quartos[0].id}`;
+        } else {
+          alert('Cadastre um quarto primeiro para visualizar reservas.');
+        }
+      } catch (err) {
+        alert('Erro: ' + err.message);
+      }
+    };
+
+    carregarQuartos();
+  </script>
+</body>
+</html>

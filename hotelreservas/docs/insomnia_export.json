@@ -1,0 +1,70 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_source": "insomnia.desktop.app:v8",
+  "resources": [
+    {
+      "_type": "request_group",
+      "name": "Hotel Reservas API",
+      "description": "Coleção de requisições para a API hotel_db"
+    },
+    {
+      "_type": "request",
+      "name": "Listar Quartos",
+      "method": "GET",
+      "url": "http://localhost:3000/api/quartos"
+    },
+    {
+      "_type": "request",
+      "name": "Buscar Quarto por ID",
+      "method": "GET",
+      "url": "http://localhost:3000/api/quartos/1"
+    },
+    {
+      "_type": "request",
+      "name": "Cadastrar Quarto",
+      "method": "POST",
+      "url": "http://localhost:3000/api/quartos",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"numero\": \"103\",\n  \"tipo\": \"Standard\"\n}"
+      }
+    },
+    {
+      "_type": "request",
+      "name": "Excluir Quarto",
+      "method": "DELETE",
+      "url": "http://localhost:3000/api/quartos/1"
+    },
+    {
+      "_type": "request",
+      "name": "Listar Reservas",
+      "method": "GET",
+      "url": "http://localhost:3000/api/reservas"
+    },
+    {
+      "_type": "request",
+      "name": "Listar Reservas por Quarto",
+      "method": "GET",
+      "url": "http://localhost:3000/api/reservas?quarto_id=1"
+    },
+    {
+      "_type": "request",
+      "name": "Cadastrar Reserva",
+      "method": "POST",
+      "url": "http://localhost:3000/api/reservas",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"hospede\": \"José Almeida\",\n  \"data_entrada\": \"2024-08-01\",\n  \"data_saida\": \"2024-08-05\",\n  \"quarto_id\": 1\n}"
+      }
+    },
+    {
+      "_type": "request",
+      "name": "Excluir Reserva",
+      "method": "DELETE",
+      "url": "http://localhost:3000/api/reservas/1"
+    }
+  ]
+}
