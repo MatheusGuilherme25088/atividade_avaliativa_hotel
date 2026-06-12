@@ -126,4 +126,4 @@ A pasta `docs` contém:
 
 ## Prints das Telas
 
-Nos WireFrames
+Prints Anexado nos WireFrames
