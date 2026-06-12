@@ -1,98 +1,129 @@
 # Hotel Reservas
 
-Sistema web full-stack para gerenciamento de quartos e reservas de hotel.
+Sistema web desenvolvido para o gerenciamento de quartos e reservas de um hotel.
 
-## Estrutura do projeto
+## Estrutura do Projeto
 
-```
+```text
 hotelreservas/
-├── api/            # Back-end (Node.js + Express + SQLite)
-├── web/            # Front-end (HTML, CSS, JavaScript)
-├── docs/           # Script SQL e exportação de requisições (Insomnia)
-├── wireframes/      # Imagens de referência do protótipo da interface
+├── api/
+├── web/
+├── docs/
+├── wireframes/
 └── README.md
 ```
 
-## Requisitos de Infraestrutura
+## Tecnologias Utilizadas
 
-- **IDE utilizada:** Visual Studio Code
-- **SGBD:** SQLite 3 (via módulo nativo `node:sqlite` do Node.js)
-- **Servidor de aplicação:** Node.js v22.x com Express 4.19
-- **Linguagens utilizadas:** JavaScript (Node.js no back-end), HTML, CSS e JavaScript (front-end)
+* IDE: Visual Studio Code
+* Banco de Dados: SQLite 3
+* Servidor de Aplicação: Node.js
+* Framework Back-end: Express
+* Linguagens: HTML, CSS e JavaScript
 
-## Modelo de Banco de Dados
+## Banco de Dados
 
-### Tabela `quartos`
-| Campo  | Tipo         |
-|--------|--------------|
-| id     | INTEGER PK   |
-| numero | VARCHAR(10)  |
-| tipo   | VARCHAR(50)  |
+### Tabela: quartos
 
-### Tabela `reservas`
-| Campo        | Tipo        |
-|--------------|-------------|
-| id           | INTEGER PK  |
-| hospede      | VARCHAR(100)|
-| data_entrada | DATE        |
-| data_saida   | DATE        |
-| quarto_id    | INTEGER (FK -> quartos.id) |
+| Campo  | Tipo        |
+| ------ | ----------- |
+| id     | INTEGER     |
+| numero | VARCHAR(10) |
+| tipo   | VARCHAR(50) |
 
-Relacionamento: um quarto pode possuir várias reservas; uma reserva pertence a apenas um quarto.
+### Tabela: reservas
 
-O script de criação das tabelas e dados de teste está em `docs/hotel_db.sql`.
-A exportação das requisições (formato Insomnia) está em `docs/insomnia_export.json`.
+| Campo        | Tipo         |
+| ------------ | ------------ |
+| id           | INTEGER      |
+| hospede      | VARCHAR(100) |
+| data_entrada | DATE         |
+| data_saida   | DATE         |
+| quarto_id    | INTEGER      |
 
-## Passo a passo de execução
+### Relacionamento
 
-### 1. Pré-requisitos
-- Node.js versão 22.5 ou superior (necessário para o módulo nativo `node:sqlite`)
+* Um quarto pode possuir várias reservas.
+* Uma reserva pertence a apenas um quarto.
 
-### 2. Back-end (API)
+## Funcionalidades
+
+### Quartos
+
+* Cadastrar quarto
+* Listar quartos
+* Excluir quarto
+
+### Reservas
+
+* Cadastrar reserva
+* Listar reservas
+* Excluir reserva
+
+## Como Executar o Projeto
+
+### 1. Instalar as dependências
 
 ```bash
 cd api
 npm install
-npm run seed     # cria o banco hotel_db.sqlite e popula com dados de teste
-npm start        # inicia a API em http://localhost:3000
 ```
 
-Endpoints disponíveis:
-
-| Método | Rota                         | Descrição                              |
-|--------|------------------------------|-----------------------------------------|
-| GET    | /api/quartos                 | Lista todos os quartos                  |
-| GET    | /api/quartos/:id              | Busca um quarto pelo id                 |
-| POST   | /api/quartos                 | Cadastra um novo quarto                 |
-| DELETE | /api/quartos/:id              | Exclui um quarto (e suas reservas)      |
-| GET    | /api/reservas                | Lista todas as reservas                 |
-| GET    | /api/reservas?quarto_id=ID    | Lista reservas de um quarto específico  |
-| POST   | /api/reservas                | Cadastra uma nova reserva               |
-| DELETE | /api/reservas/:id              | Exclui uma reserva                      |
-
-### 3. Front-end (Web)
-
-O front-end é um conjunto de páginas HTML/CSS/JS estáticas que consomem a API.
+### 2. Criar o banco de dados
 
 ```bash
-cd web
-# Abra o arquivo index.html no navegador,
-# ou utilize um servidor estático, por exemplo:
-npx serve .
+npm run seed
 ```
 
-> A API deve estar em execução em `http://localhost:3000` para que o front-end funcione corretamente (configurável em `web/api.js`).
+### 3. Iniciar a API
 
-## Telas do sistema
+```bash
+npm start
+```
 
-1. **Tela Principal** (`index.html`) — Listagem dos quartos cadastrados, com botões para cadastrar novo quarto, ver reservas e excluir.
-2. **Cadastro de Quarto** (`cadastro-quarto.html`) — Formulário para informar número e tipo do quarto.
-3. **Reservas do Quarto** (`reservas-quarto.html`) — Lista de reservas associadas a um quarto específico, com botão para nova reserva.
-4. **Cadastro de Reserva** (`cadastro-reserva.html`) — Formulário para registrar nome do hóspede, data de entrada e saída.
-5. **Confirmação de exclusão** — Modais de confirmação são exibidos antes de excluir quartos ou reservas.
+A API será iniciada em:
 
-As imagens do protótipo da interface (wireframes) estão disponíveis na pasta `./wireframes`.
+```text
+http://localhost:3000
+```
 
-## Prints das telas
+### 4. Executar o Front-end
 
-> Adicione aqui os prints das telas em execução (front-end rodando e consumindo a API).
+Abra o arquivo:
+
+```text
+web/index.html
+```
+
+ou utilize uma extensão como Live Server.
+
+## Endpoints da API
+
+### Quartos
+
+| Método | Rota             |
+| ------ | ---------------- |
+| GET    | /api/quartos     |
+| GET    | /api/quartos/:id |
+| POST   | /api/quartos     |
+| DELETE | /api/quartos/:id |
+
+### Reservas
+
+| Método | Rota                       |
+| ------ | -------------------------- |
+| GET    | /api/reservas              |
+| GET    | /api/reservas?quarto_id=id |
+| POST   | /api/reservas              |
+| DELETE | /api/reservas/:id          |
+
+## Arquivos de Documentação
+
+A pasta `docs` contém:
+
+* Script do banco de dados.
+* Exportação das requisições do Insomnia.
+
+## Prints das Telas
+
+Nos WireFrames
